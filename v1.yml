@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampleapp
+  labels:
+    app: sampleapp
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: sampleapp
+  template:
+    metadata:
+      labels:
+        app: sampleapp
+    spec:
+      containers:
+      - name: sampleapp
+        image: relaxdiego/sampleapp:v1
+        ports:
+        - containerPort: 4567
+        env:
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sampleapp
+spec:
+  selector:
+    app: sampleapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4567
+  type: NodePort
