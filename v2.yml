@@ -39,16 +39,3 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: sampleapp
-spec:
-  selector:
-    app: sampleapp
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 4567
-  type: NodePort
