@@ -1,8 +1,8 @@
 import os
 
-
-from flask import Flask, jsonify, render_template
+from flask import Flask, render_template
 app = Flask(__name__)
+
 
 hits = 0
 VERSION = 2
@@ -13,12 +13,12 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api')
-def api():
+@app.route('/data')
+def data():
     global hits
     hits += 1
 
-    payload = {
+    data = {
         'version': VERSION,
         'pod_name': os.environ.get('MY_POD_NAME', ''),
         'pod_ip': os.environ.get('MY_POD_IP', ''),
@@ -26,4 +26,4 @@ def api():
         'hits': hits
     }
 
-    return jsonify(payload)
+    return render_template('table.html', **data)
