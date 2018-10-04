@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title>Kubernetes Demo</title>
+    <script src="/static/jquery.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <table class="data">
+    </table>
+
+    <script>
+      function get_data(){
+        $.getJSON('/api', function(data) {
+          var items = []
+          $.each(data, function(key, val){
+            items.push('<tr><td>' + key + '</td><td>' + val + '</td></tr>')
+          });
+
+          $("table.data").html(items.join(""));
+        });
+        setTimeout(get_data, 1000);
+      }
+
+      get_data();
+    </script>
+  </body>
+</html>

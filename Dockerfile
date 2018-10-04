@@ -1,10 +1,12 @@
-FROM ruby:2.4.2-slim-stretch
+FROM python:3.6.6-slim-stretch
 
 USER root
-WORKDIR /usr/local/bin
+WORKDIR /opt/app
 
-RUN gem install sinatra
+RUN pip install flask
+COPY app/ .
 
-COPY server.rb .
+ENV FLASK_ENV="development"
+ENV FLASK_APP="/opt/app/server.py"
 
-ENTRYPOINT  ["/usr/local/bin/server.rb"]
+ENTRYPOINT  ["/usr/local/bin/flask", "run", "--host=0.0.0.0"]

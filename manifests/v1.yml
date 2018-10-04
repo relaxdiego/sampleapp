@@ -9,8 +9,8 @@ spec:
   replicas: 4
   strategy:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 25%
+      maxUnavailable: 25%
     type: RollingUpdate
   selector:
     matchLabels:
@@ -22,10 +22,10 @@ spec:
     spec:
       containers:
       - name: sampleapp
-        image: relaxdiego/sampleapp:v2
+        image: relaxdiego/sampleapp:v1
         imagePullPolicy: Always
         ports:
-        - containerPort: 4567
+        - containerPort: 5000
         env:
         - name: MY_NODE_NAME
           valueFrom:
@@ -39,3 +39,31 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: sampleapp
+spec:
+  selector:
+    app: sampleapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sampleapp
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: sampleapp.homelab
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sampleapp
+          servicePort: 80

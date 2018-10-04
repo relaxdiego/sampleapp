@@ -1,0 +1,15 @@
+body{
+    font-family: Menlo,monospace;
+}
+
+table.data {
+    background-color: #CFCFCF; 
+    border-radius: 3px;
+    margin-left:auto; 
+    margin-right:auto;
+    padding: 5px;
+}
+
+table.data td:first-child {
+    width: 100px;
+}
