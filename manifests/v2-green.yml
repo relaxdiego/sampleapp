@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sampleapp
+  name: sampleapp-v2
   labels:
-    app: sampleapp
+    app: sampleapp-v2
 spec:
   replicas: 3
   strategy:
@@ -14,11 +14,11 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: sampleapp
+      app: sampleapp-v2
   template:
     metadata:
       labels:
-        app: sampleapp
+        app: sampleapp-v2
     spec:
       containers:
       - name: sampleapp
@@ -47,3 +47,33 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: sampleapp-v2
+spec:
+  selector:
+    app: sampleapp-v2
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sampleapp-v2
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: sampleapp-v2.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: sampleapp-v2
+          servicePort: 80

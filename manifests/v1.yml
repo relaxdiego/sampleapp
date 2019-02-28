@@ -6,7 +6,7 @@ metadata:
   labels:
     app: sampleapp
 spec:
-  replicas: 4
+  replicas: 3
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -26,6 +26,14 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
         env:
         - name: MY_NODE_NAME
           valueFrom:
@@ -39,7 +47,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+
 ---
+
 kind: Service
 apiVersion: v1
 metadata:
@@ -51,6 +61,7 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 5000
+
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -60,7 +71,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: sampleapp.homelab
+  - host: sampleapp.local
     http:
       paths:
       - path: /
